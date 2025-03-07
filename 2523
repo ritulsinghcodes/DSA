@@ -1,0 +1,30 @@
+from typing import List
+
+class Solution:
+    def closestPrimes(self, left: int, right: int) -> List[int]:
+        # Step 1: Use Sieve of Eratosthenes to find all primes up to `right`
+        def sieve(n):
+            is_prime = [True] * (n + 1)
+            is_prime[0] = is_prime[1] = False  # 0 and 1 are not prime
+            for i in range(2, int(n ** 0.5) + 1):
+                if is_prime[i]:
+                    for j in range(i * i, n + 1, i):
+                        is_prime[j] = False
+            return is_prime
+
+        primes = sieve(right)  # Get all primes up to `right`
+        list1 = [i for i in range(left, right + 1) if primes[i]]  # Filter primes in range
+
+        if len(list1) < 2:
+            return [-1, -1]  # Not enough primes to form a pair
+
+        # Step 2: Find the closest prime pair
+        mindif = float('inf')
+        l, r = -1, -1
+        for i in range(len(list1) - 1):
+            diff = list1[i + 1] - list1[i]
+            if diff < mindif:
+                mindif = diff
+                l, r = list1[i], list1[i + 1]
+
+        return [l, r]
